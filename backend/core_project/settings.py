@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'ingestion',
-    'records',
+    'core',
+
 ]
 
 MIDDLEWARE = [
