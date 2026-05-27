@@ -1,12 +1,12 @@
 from django.db import models
 import uuid
-from django.contrib.auth.models import AsbtractUser
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class Client(models.Model):
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     name = models.CharField(max_length= 255)
-    created_at = models.DateTimeField(auto_add_now = True)
+    created_at = models.DateTimeField(auto_now_add = True)
 
     class Meta:
         ordering =['name']
@@ -24,7 +24,7 @@ class User(AsbtractUser):
     ]
     id = models.UUIDField(primary_key =True, default = uuid.uuid4, editable =False)
     username = models.CharField(max_length=150, unique=True)
-    client = models.ForeingKey(Client, on_delete= cascade, related_name= users)
+    client = models.ForeingKey(Client, on_delete= models.CASCADE, related_name= 'users')
     role = models.CharField(max_length=20, choices= ROLE_CHOICES, default= ROLE_ADMIN)
 
     def __str__(self):
@@ -51,7 +51,7 @@ class Audit_log(models.Model):
     action = models.CharField(max_length=20, choices= ACTION_CHOICES)
     entity_type = models.CharField(max_length=50)
     entity_id = models.CharField(max_length=50)
-    details = models.JsonField(blank=True, null=True)
+    details = models.JSONField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
