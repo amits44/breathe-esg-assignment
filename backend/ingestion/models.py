@@ -49,7 +49,7 @@ class Ingestion(models.Model):
             models.Index(fields=['client', 'sources', 'status']),
         ]
     
-    class __str__(self):
+    def __str__(self):
         return f"Ingestion {self.id} - {self.sources} ({self.status})"
 
 class RawRecord(models.Model):
@@ -71,7 +71,7 @@ class RawRecord(models.Model):
     def __str__(self):
         return f"RawRecord {self.id} for Ingestion {self.ingestion.id}"
 
-class NormalizedRecords(models.Model):
+class NormalizedRecord(models.Model):
     STATUS_PENDING = 'pending'
     STATUS_FLAGGED = 'flagged'
     STATUS_APPROVED = 'approved'
@@ -145,4 +145,4 @@ class NormalizedRecords(models.Model):
 
     @property
     def amount_display(self):
-        return f"{self.currency} {self.amount / 100:.2f}"
+        return f"{self.currency} {self.amount:.2f}"
