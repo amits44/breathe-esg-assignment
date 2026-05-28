@@ -1,0 +1,292 @@
+{
+  "bookings": [
+    {
+      "id": "TRP-90123-FL",
+      "type": "flight",
+      "status": "booked",
+      "traveler": {
+        "name": "Sarah Connor",
+        "email": "s.connor@acmecorp.com",
+        "department": "Sales",
+        "employee_id": "EMP-1042"
+      },
+      "booking_date": "2026-05-20T14:30:00Z",
+      "travel_dates": {
+        "departure": "2026-06-10",
+        "return": "2026-06-15"
+      },
+      "origin": "SFO",
+      "destination": "JFK",
+      "vendor": "Delta Air Lines",
+      "cabin_class": "economy",
+      "amount": {
+        "total": 650.00,
+        "currency": "USD"
+      },
+      "purpose": "Q2 Client Summit",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-90124-HT",
+      "type": "hotel",
+      "status": "booked",
+      "traveler": {
+        "name": "Sarah Connor",
+        "email": "s.connor@acmecorp.com",
+        "department": "Sales",
+        "employee_id": "EMP-1042"
+      },
+      "booking_date": "2026-05-20T14:45:00Z",
+      "travel_dates": {
+        "departure": "2026-06-10",
+        "return": "2026-06-15"
+      },
+      "origin": "JFK",
+      "destination": "JFK",
+      "vendor": "Marriott Downtown",
+      "nights": 5,
+      "amount": {
+        "total": 1850.50,
+        "currency": "USD"
+      },
+      "purpose": "Q2 Client Summit Lodging",
+      "policy": {
+        "compliant": false,
+        "out_of_policy_reason": "Exceeded nightly room rate limit by $50"
+      }
+    },
+    {
+      "id": "TRP-88442-TR",
+      "type": "train",
+      "status": "cancelled",
+      "traveler": {
+        "name": "Marcus Wright",
+        "email": "m.wright@acmecorp.com",
+        "department": "Engineering",
+        "employee_id": "EMP-2087"
+      },
+      "booking_date": "2026-05-18T09:15:00Z",
+      "travel_dates": {
+        "departure": "2026-05-25",
+        "return": "2026-05-25"
+      },
+      "origin": "BOS",
+      "destination": "NYP",
+      "vendor": "Amtrak Acela",
+      "amount": {
+        "total": 130.00,
+        "currency": "USD"
+      },
+      "purpose": "Vendor Meeting",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-91005-FL",
+      "type": "flight",
+      "status": "booked",
+      "traveler": {
+        "name": "Priya Sharma",
+        "email": "p.sharma@acmecorp.com",
+        "department": "Finance",
+        "employee_id": "EMP-3301"
+      },
+      "booking_date": "2026-05-22T10:00:00Z",
+      "travel_dates": {
+        "departure": "2026-06-03",
+        "return": "2026-06-07"
+      },
+      "origin": "BOM",
+      "destination": "LHR",
+      "vendor": "British Airways",
+      "cabin_class": "business",
+      "amount": {
+        "total": 4200.00,
+        "currency": "USD"
+      },
+      "purpose": "Annual Finance Review — London HQ",
+      "policy": {
+        "compliant": false,
+        "out_of_policy_reason": "Business class not approved for trips under 8 hours"
+      }
+    },
+    {
+      "id": "TRP-91006-HT",
+      "type": "hotel",
+      "status": "booked",
+      "traveler": {
+        "name": "Priya Sharma",
+        "email": "p.sharma@acmecorp.com",
+        "department": "Finance",
+        "employee_id": "EMP-3301"
+      },
+      "booking_date": "2026-05-22T10:20:00Z",
+      "travel_dates": {
+        "departure": "2026-06-03",
+        "return": "2026-06-07"
+      },
+      "origin": "LHR",
+      "destination": "LHR",
+      "vendor": "Hilton London Canary Wharf",
+      "nights": 4,
+      "amount": {
+        "total": 1120.00,
+        "currency": "GBP"
+      },
+      "purpose": "Annual Finance Review Lodging",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-91210-CR",
+      "type": "car",
+      "status": "booked",
+      "traveler": {
+        "name": "James Reese",
+        "email": "j.reese@acmecorp.com",
+        "department": "Operations",
+        "employee_id": "EMP-1188"
+      },
+      "booking_date": "2026-05-24T08:30:00Z",
+      "travel_dates": {
+        "departure": "2026-06-01",
+        "return": "2026-06-03"
+      },
+      "origin": "ORD",
+      "destination": "ORD",
+      "vendor": "Enterprise Rent-A-Car",
+      "amount": {
+        "total": 310.00,
+        "currency": "USD"
+      },
+      "purpose": "Site Inspection — Chicago Plant",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-91350-FL",
+      "type": "flight",
+      "status": "booked",
+      "traveler": {
+        "name": "James Reese",
+        "email": "j.reese@acmecorp.com",
+        "department": "Operations",
+        "employee_id": "EMP-1188"
+      },
+      "booking_date": "2026-05-24T08:45:00Z",
+      "travel_dates": {
+        "departure": "2026-06-01",
+        "return": "2026-06-03"
+      },
+      "origin": "LAX",
+      "destination": "ORD",
+      "vendor": "United Airlines",
+      "cabin_class": "economy",
+      "amount": {
+        "total": 480.00,
+        "currency": "USD"
+      },
+      "purpose": "Site Inspection — Chicago Plant",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-91500-FL",
+      "type": "flight",
+      "status": "booked",
+      "traveler": {
+        "name": "Elena Vasquez",
+        "email": "e.vasquez@acmecorp.com",
+        "department": "Marketing",
+        "employee_id": "EMP-4450"
+      },
+      "booking_date": "2026-05-26T16:00:00Z",
+      "travel_dates": {
+        "departure": "2026-07-08",
+        "return": "2026-07-12"
+      },
+      "origin": "DFW",
+      "destination": "CDG",
+      "vendor": "Air France",
+      "cabin_class": "economy",
+      "amount": {
+        "total": 1150.00,
+        "currency": "USD"
+      },
+      "purpose": "Global Marketing Conference — Paris",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-91501-HT",
+      "type": "hotel",
+      "status": "booked",
+      "traveler": {
+        "name": "Elena Vasquez",
+        "email": "e.vasquez@acmecorp.com",
+        "department": "Marketing",
+        "employee_id": "EMP-4450"
+      },
+      "booking_date": "2026-05-26T16:20:00Z",
+      "travel_dates": {
+        "departure": "2026-07-08",
+        "return": "2026-07-12"
+      },
+      "origin": "CDG",
+      "destination": "CDG",
+      "vendor": "Ibis Paris Centre",
+      "nights": 4,
+      "amount": {
+        "total": 680.00,
+        "currency": "EUR"
+      },
+      "purpose": "Global Marketing Conference Lodging",
+      "policy": {
+        "compliant": true,
+        "out_of_policy_reason": null
+      }
+    },
+    {
+      "id": "TRP-91780-FL",
+      "type": "flight",
+      "status": "booked",
+      "traveler": {
+        "name": "David Lau",
+        "email": "d.lau@acmecorp.com",
+        "department": "Legal",
+        "employee_id": "EMP-5512"
+      },
+      "booking_date": "2026-05-27T11:00:00Z",
+      "travel_dates": {
+        "departure": "2026-06-18",
+        "return": "2026-06-18"
+      },
+      "origin": "SFO",
+      "destination": "SEA",
+      "vendor": "",
+      "cabin_class": "economy",
+      "amount": {
+        "total": 0,
+        "currency": "USD"
+      },
+      "purpose": "Deposition — Seattle",
+      "policy": {
+        "compliant": false,
+        "out_of_policy_reason": ""
+      }
+    }
+  ]
+}
