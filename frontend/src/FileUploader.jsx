@@ -18,9 +18,9 @@ export default function FileUploader({ onUploadSuccess }) {
     if (source === 'sap' && ekpoFile) formData.append('ekpo_file', ekpoFile);
 
     const endpoints = {
-      sap:     'http://localhost:8000/api/v1/upload/sap/',
-      utility: 'http://localhost:8000/api/v1/upload/utility/',
-      navan:   'http://localhost:8000/api/v1/upload/navan/',
+      sap:     '${import.meta.env.VITE_API_URL}/api/v1/upload/sap/',
+      utility: '${import.meta.env.VITE_API_URL}/api/v1/upload/utility/',
+      navan:   '${import.meta.env.VITE_API_URL}/api/v1/upload/navan/',
     };
 
     try {
