@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from typing import Iterator
+from decimal import Decimal
 
 from ingestion.models import RawRecord, NormalizedRecord
 
@@ -50,7 +51,7 @@ def normalize_navan_record(raw: RawRecord) -> NormalizedRecord:
 
     policy = data.get("policy", {})
     is_compliant = policy.get("compliant")
-    out_of_policy = policy.get("out_of_policy_reason", "")
+    out_of_policy = policy.get("out_of_policy_reason") or ""
 
     if is_compliant is False and not out_of_policy:
         warnings.append("Out-of-policy booking with no reason provided")
