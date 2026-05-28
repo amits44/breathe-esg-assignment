@@ -134,7 +134,7 @@ def normalize_sap_record(raw: RawRecord) -> NormalizedRecord:
     quantity = data.get("MENGE", "").strip()
     unit = data.get("MEINS", "").strip()
 
-    return NormalizedRecord(
+    norm = NormalizedRecord(
         client=raw.client,
         raw_record=raw,
         source=raw.source,
@@ -149,3 +149,8 @@ def normalize_sap_record(raw: RawRecord) -> NormalizedRecord:
         sap_company_code=data.get("BUKRS", "").strip(),
         normalization_warnings=warnings,
     )
+    norm._quantity = quantity
+    norm._unit = unit
+    norm._description_raw = description
+
+    return norm
