@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from .scope_classifier import classify_record
 from django.db import transaction
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.exceptions import PermissionDenied
@@ -40,7 +40,6 @@ def _log_audit(client, user, action, entity_type, entity_id, detail=None):
 
 
 def _run_csv_pipeline(client, user, source, file_content, original_filename, ekpo_content=None):
-    """Shared pipeline for SAP and Utility CSV ingestion."""
     batch = Ingestion.objects.create(
         client=client,
         uploaded_by=user,
@@ -80,12 +79,15 @@ def _run_csv_pipeline(client, user, source, file_content, original_filename, ekp
                     norm = normalize_sap_record(raw)
                 else:
                     norm = normalize_utility_record(raw, col_map)
+
+                scope, co2e, scope_warnings = classify_record(norm)
+                norm.emission_scope = scope
+                norm.co2e_kg = co2e
+                norm.normalization_warnings = (norm.normalization_warnings or []) + scope_warnings
                 normalized.append(norm)
             except Exception as exc:
                 error_count += 1
-                #raw.parse_error = str(exc)
                 print(f"Row error: {exc}")
-                #raw.save(update_fields=['parse_error']) if hasattr(raw, 'parse_error') else None
 
         NormalizedRecord.objects.bulk_create(normalized)
 
@@ -149,6 +151,9 @@ def _record_to_dict(record):
         'navan_travel_type': record.navan_travel_type,
         'navan_policy_compliant': record.navan_policy_compliant,
         'navan_out_of_policy_reason': record.navan_out_of_policy_reason,
+        #scope
+        'emission_scope': record.emission_scope,
+        'co2e_kg': str(record.co2e_kg),
     }
 
 
@@ -201,12 +206,10 @@ class UploadNavanView(ClientScopedMixin, APIView):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def post(self, request):
-        # 2. Extract the file from the request
         uploaded_file = request.FILES.get("file")
         if not uploaded_file:
             return Response({"error": "file is required."}, status=400)
         
-        # 3. Read the JSON file and convert it into a Python dictionary
         try:
             file_content = uploaded_file.read().decode('utf-8')
             navan_data = json.loads(file_content)
@@ -219,14 +222,13 @@ class UploadNavanView(ClientScopedMixin, APIView):
             uploaded_by=request.user,
             sources=Ingestion.SOURCE_NAVAN,
             status=Ingestion.STATUS_PROCESSING,
-            original_filename=uploaded_file.name, # Optional: track the filename!
+            original_filename=uploaded_file.name,
         )
 
         _log_audit(client, request.user, Audit_log.ACTION_UPLOAD, 'Ingestion', batch.id,
                    {'source': 'navan'})
 
         try:
-            # 4. Pass the parsed dictionary to your normalizer
             bookings = list(parse_navan_response(navan_data))
 
             raw_records = [
@@ -240,10 +242,15 @@ class UploadNavanView(ClientScopedMixin, APIView):
             error_count = 0
             for raw in raw_records:
                 try:
-                    normalized.append(normalize_navan_record(raw))
+                    norm = normalize_navan_record(raw)
+                    scope, co2e, scope_warnings = classify_record(norm)
+                    norm.emission_scope = scope
+                    norm.co2e_kg = co2e
+                    norm.normalization_warnings = (norm.normalization_warnings or []) + scope_warnings
+                    normalized.append(norm)
                 except Exception as exc:
                     error_count += 1
-                    print(f"Navan Row Error: {exc}") 
+                    print(f"Navan Row Error: {exc}")
 
             NormalizedRecord.objects.bulk_create(normalized)
 
@@ -378,6 +385,14 @@ class SummaryView(ClientScopedMixin, APIView):
                 result[row['status']] = row['n']
             return result
 
+        scope_totals = {}
+        for scope in [1, 2, 3]:
+            qs_scope = records.filter(emission_scope=scope)
+            scope_totals[f'scope_{scope}'] = {
+                'count': qs_scope.count(),
+                'co2e_kg': str(qs_scope.aggregate(t=Sum('co2e_kg'))['t'] or 0),
+            }
+
         return Response({
             'total_records': records.count(),
             'total_amount': str(records.aggregate(t=Sum('amount'))['t'] or 0),
@@ -386,6 +401,7 @@ class SummaryView(ClientScopedMixin, APIView):
                 src: status_counts(records.filter(source=src))
                 for src in ['sap', 'utility', 'navan']
             },
+            'scope_totals': scope_totals,
         })
 
 

@@ -82,11 +82,22 @@ class NormalizedRecord(models.Model):
         (STATUS_FLAGGED, 'Flagged'),
         (STATUS_APPROVED, 'Approved'),
         (STATUS_REJECTED, 'Rejected'),
-     ]
+    ]
+    SCOPE_1 = 'direct'
+    SCOPE_2 = 'Purchased Energy'
+    SCOPE_3 = 'Value Chain'
+
+    SCOPE_CHOICES = [
+        (SCOPE_1,'direct'),
+        (SCOPE_2,'Purchased Energy'),
+        (SCOPE_3, 'Value Chain'),
+    ]   
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     client = models.ForeignKey(Client, on_delete= models.CASCADE, related_name='normalized_records')
     raw_record = models.OneToOneField(RawRecord, on_delete= models.CASCADE, related_name='normalized_record')
     source= models.CharField(max_length=20)
+    emission_scope = models.IntegerField(null=True, blank=True, choices=SCOPE_CHOICES)
+    co2e_kg = models.DecimalField(max_digits=12, decimal_places=4, default=0)
 
     transaction_id = models.CharField(max_length=50, blank=True)
     transaction_date = models.DateField(null=True, blank=True)
