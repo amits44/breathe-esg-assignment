@@ -6,10 +6,7 @@
 3. **Source-of-truth tracking** — always being able to answer "where did this row come from, and what did it look like when it arrived?"
 4. **Audit trail** — a log of every action anyone took, so nothing is a black box
 
-Everything in the data model is designed around these four requirements. I'll explain each decision in plain terms below.
-
 ---
-
 ## How the tables relate to each other
 
 ```
@@ -21,7 +18,7 @@ Client
   └── Audit_log  (a running log of every action — belongs to Client + User)
 ```
 
-Think of it like this: a **Client** is a company. That company has **Users**. When a user uploads a file, that creates one **Ingestion** (the upload event). Every row in that file becomes a **RawRecord** (stored exactly as-is). Each raw row is then cleaned up and stored as a **NormalizedRecord** (the version analysts actually look at). Every meaningful action along the way gets written to **Audit_log**.
+a **Client** is a company. That company has **Users**. When a user uploads a file, that creates one **Ingestion** (the upload event). Every row in that file becomes a **RawRecord** (stored exactly as-is). Each raw row is then cleaned up and stored as a **NormalizedRecord** (the version analysts actually look at). Every meaningful action along the way gets written to **Audit_log**.
 
 ---
 
