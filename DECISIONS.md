@@ -6,11 +6,11 @@
 
 **Options I looked at:** IDoc (XML), BAPI (function call), OData service, plain CSV file.
 
-**What I chose:** A flat CSV file export from SAP — specifically the EKKO table (purchase order headers) joined with EKPO (purchase order line items).
+**What I chose:** A flat CSV file export from SAP specifically the EKKO table (purchase order headers) joined with EKPO (purchase order line items).
 
-**Why I chose this:**
+**Why I chose this:** 
 
-When a sustainability analyst at a real company asks the SAP team for procurement data, what they actually get is a CSV file. The other options sound more technical:
+When an analyst at a real company asks the SAP team for procurement data, what they actually get is a CSV file. The other options sound more technical:
 - **IDoc** needs the SAP infrastructure team to configure a special outbound port. The sustainability team can't do this themselves.
 - **BAPI / OData** need server credentials and network access that the sustainability team doesn't control.
 
