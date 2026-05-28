@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+import json
 from core.models import Audit_log
 from .models import Ingestion, RawRecord, NormalizedRecord
 from .normalizers.sap import parse_sap_csv, normalize_sap_record
@@ -197,12 +197,21 @@ class UploadUtilityView(ClientScopedMixin, APIView):
         return Response(_batch_to_dict(batch), status=201)
 
 
-class IngestNavanView(ClientScopedMixin, APIView):
-    parser_classes = [JSONParser]
+class UploadNavanView(ClientScopedMixin, APIView):
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def post(self, request):
-        if not isinstance(request.data, (dict, list)):
-            return Response({"error": "Body must be JSON."}, status=400)
+        # 2. Extract the file from the request
+        uploaded_file = request.FILES.get("file")
+        if not uploaded_file:
+            return Response({"error": "file is required."}, status=400)
+        
+        # 3. Read the JSON file and convert it into a Python dictionary
+        try:
+            file_content = uploaded_file.read().decode('utf-8')
+            navan_data = json.loads(file_content)
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid JSON file."}, status=400)
 
         client = self.get_client()
         batch = Ingestion.objects.create(
@@ -210,13 +219,15 @@ class IngestNavanView(ClientScopedMixin, APIView):
             uploaded_by=request.user,
             sources=Ingestion.SOURCE_NAVAN,
             status=Ingestion.STATUS_PROCESSING,
+            original_filename=uploaded_file.name, # Optional: track the filename!
         )
 
         _log_audit(client, request.user, Audit_log.ACTION_UPLOAD, 'Ingestion', batch.id,
                    {'source': 'navan'})
 
         try:
-            bookings = list(parse_navan_response(request.data))
+            # 4. Pass the parsed dictionary to your normalizer
+            bookings = list(parse_navan_response(navan_data))
 
             raw_records = [
                 RawRecord(ingestion=batch, client=client,
@@ -232,6 +243,7 @@ class IngestNavanView(ClientScopedMixin, APIView):
                     normalized.append(normalize_navan_record(raw))
                 except Exception as exc:
                     error_count += 1
+                    print(f"Navan Row Error: {exc}") 
 
             NormalizedRecord.objects.bulk_create(normalized)
 
@@ -250,7 +262,6 @@ class IngestNavanView(ClientScopedMixin, APIView):
             raise
 
         return Response(_batch_to_dict(batch), status=201)
-
 
 
 class BatchListView(ClientScopedMixin, APIView):
@@ -378,7 +389,6 @@ class SummaryView(ClientScopedMixin, APIView):
         })
 
 
-# ── Audit log view ────────────────────────────────────────────────────────────
 
 class AuditLogListView(ClientScopedMixin, APIView):
     """GET /api/v1/audit/"""
