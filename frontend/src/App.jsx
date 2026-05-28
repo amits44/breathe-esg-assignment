@@ -1,79 +1,212 @@
-import React, { useState } from 'react';
+/*import { useState, useEffect } from 'react';
+import ReviewDashboard from './ReviewDashboard';
+import FileUploader from './FileUploader';
 
-export default function UploadUI({ onUploadSuccess }) {
-  const [source, setSource] = useState('SAP');
-  const [file, setFile] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
+const Login = ({ onLogin }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUpload = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (!file) return alert("Please select a file first.");
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('source', source);
-
+    setError('');
     try {
-      // Assuming your Django API runs on localhost:8000
-      const response = await fetch(`http://localhost:8000/api/ingest/${source.toLowerCase()}/`, {
+      const res = await fetch('http://localhost:8000/api/v1/auth/token/', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
       });
 
-      if (response.ok) {
-        alert("Data successfully ingested and sent to the parsing pipeline.");
-        setFile(null);
-        onUploadSuccess(); // Trigger dashboard refresh
-      } else {
-        alert("Ingestion failed. Check API logs.");
-      }
-    } catch (error) {
-      console.error("Upload error:", error);
-    } finally {
-      setIsUploading(false);
+      if (!res.ok) throw new Error("Invalid username or password");
+
+      const data = await res.json();
+      
+      localStorage.setItem('auth_token', data.token); 
+      onLogin();
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md mb-8 border border-gray-200">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Manual Data Ingestion</h2>
-      <form onSubmit={handleUpload} className="flex items-end gap-4">
-        <div className="flex flex-col">
-          <label className="text-sm font-semibold text-gray-600 mb-1">Data Source</label>
-          <select 
-            value={source} 
-            onChange={(e) => setSource(e.target.value)}
-            className="border p-2 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="SAP">SAP ERP (CSV)</option>
-            <option value="UTILITY">Utility Portal (CSV)</option>
-            <option value="CONCUR">Corporate Travel (JSON)</option>
-          </select>
-        </div>
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="p-8 bg-white rounded-lg shadow-md border border-gray-200 text-center w-96">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">Breathe ESG</h2>
+        <p className="text-gray-600 mb-6 text-sm">Analyst Audit Portal</p>
         
-        <div className="flex flex-col flex-grow">
-          <label className="text-sm font-semibold text-gray-600 mb-1">Select File</label>
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <input 
-            type="file" 
-            onChange={handleFileChange}
-            accept=".csv,.json"
-            className="border p-2 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            type="text" 
+            placeholder="Username (e.g., admin)" 
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border p-2 rounded text-left"
+            required
           />
-        </div>
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded text-left"
+            required
+          />
+          {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
+          <button 
+            type="submit"
+            className="bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Log In
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const [refreshTrigger, setRefreshTrigger] = useState(0); 
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('auth_token'));
+  }, []);
+
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="flex justify-between items-center mb-6 max-w-6xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-800">Data Normalization Pipeline</h1>
         <button 
-          type="submit" 
-          disabled={isUploading}
-          className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 disabled:bg-gray-400"
+          onClick={() => {
+            localStorage.removeItem('auth_token');
+            setIsLoggedIn(false);
+          }}
+          className="text-sm text-red-600 hover:underline font-semibold"
         >
-          {isUploading ? 'Ingesting...' : 'Run Pipeline'}
+          Sign Out
         </button>
-      </form>
+      </div>
+      
+      <div className="max-w-6xl mx-auto">
+        {/* Pass the state updater so the uploader can tell the dashboard to refresh *//*
+        <FileUploader onUploadSuccess={() => setRefreshTrigger(prev => prev + 1)} />
+        
+        /* Pass the trigger variable down to the dashboard *//*
+        <ReviewDashboard refreshTrigger={refreshTrigger} />
+      </div>
+    </div>
+  );
+}
+  */
+import { useState, useEffect } from 'react';
+import ReviewDashboard from './ReviewDashboard';
+import FileUploader from './FileUploader';
+
+const Login = ({ onLogin }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      // Hit the endpoint you defined in urls.py
+      const res = await fetch('http://localhost:8000/api/v1/auth/token/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!res.ok) throw new Error("Invalid username or password");
+
+      const data = await res.json();
+      
+      // Save the dynamically generated real token to the browser
+      localStorage.setItem('auth_token', data.token); 
+      onLogin();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="p-8 bg-white rounded-lg shadow-md border border-gray-200 text-center w-96">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">Breathe ESG</h2>
+        <p className="text-gray-600 mb-6 text-sm">Analyst Audit Portal</p>
+        
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          <input 
+            type="text" 
+            placeholder="Username (e.g., admin)" 
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border p-2 rounded text-left"
+            required
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded text-left"
+            required
+          />
+          {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
+          <button 
+            type="submit"
+            className="bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Log In
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // This state exists purely to trigger a refresh in the dashboard
+  const [refreshTrigger, setRefreshTrigger] = useState(0); 
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('auth_token'));
+  }, []);
+
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="flex justify-between items-center mb-6 max-w-6xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-800">Data Normalization Pipeline</h1>
+        <button 
+          onClick={() => {
+            localStorage.removeItem('auth_token');
+            setIsLoggedIn(false);
+          }}
+          className="text-sm text-red-600 hover:underline font-semibold"
+        >
+          Sign Out
+        </button>
+      </div>
+      
+      <div className="max-w-6xl mx-auto">
+        {/* Pass the state updater so the uploader can tell the dashboard to refresh */}
+        <FileUploader onUploadSuccess={() => setRefreshTrigger(prev => prev + 1)} />
+        
+        {/* Pass the trigger variable down to the dashboard */}
+        <ReviewDashboard refreshTrigger={refreshTrigger} />
+      </div>
     </div>
   );
 }
