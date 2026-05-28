@@ -1,4 +1,10 @@
-from core.models import User, Client
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core_project.settings")
+django.setup()  
+
+from core.models import User, Client  
 
 username = os.environ.get("DJANGO_SUPERUSER_USERNAME", "admin")
 email = os.environ.get("DJANGO_SUPERUSER_EMAIL", "admin@example.com")
