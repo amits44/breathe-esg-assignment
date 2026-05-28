@@ -2,6 +2,8 @@
 backend/venv/
 backend/__pycache__/
 backend/*.pyc
+*.py[cod]
+*$py.class
 backend/*.pyo
 backend/*.pyd
 backend/.Python
@@ -22,6 +24,9 @@ frontend/coverage/
 .env.development.local
 .env.test.local
 .env.production.local
+
+#database
+db.sqlite3
 
 # OS / IDE Files
 .DS_Store
