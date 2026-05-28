@@ -14,7 +14,7 @@ class Client(models.Model):
     def __str__(self):
         return self.name
 
-class User(AsbtractUser):
+class User(AbstractUser):
     ROLE_AUDITOR = 'auditor'
     ROLE_ADMIN = 'admin'
 
@@ -24,7 +24,7 @@ class User(AsbtractUser):
     ]
     id = models.UUIDField(primary_key =True, default = uuid.uuid4, editable =False)
     username = models.CharField(max_length=150, unique=True)
-    client = models.ForeingKey(Client, on_delete= models.CASCADE, related_name= 'users')
+    client = models.ForeignKey(Client, on_delete= models.CASCADE, related_name= 'users',null=True,blank=True)
     role = models.CharField(max_length=20, choices= ROLE_CHOICES, default= ROLE_ADMIN)
 
     def __str__(self):
