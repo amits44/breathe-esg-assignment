@@ -23,8 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 import os
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-for-local-only")
-DEBUG = os.environ.get("DEBUG", "True") == "True"
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
