@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API = 'http://localhost:8000/api/v1';
+const API = '${import.meta.env.VITE_API_URL}/api/v1';
 const authHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Token ${localStorage.getItem('auth_token')}`,
