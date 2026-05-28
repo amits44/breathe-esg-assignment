@@ -17,10 +17,11 @@ export default function FileUploader({ onUploadSuccess }) {
     formData.append('file', file);
     if (source === 'sap' && ekpoFile) formData.append('ekpo_file', ekpoFile);
 
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     const endpoints = {
-      sap:     '${import.meta.env.VITE_API_URL}/api/v1/upload/sap/',
-      utility: '${import.meta.env.VITE_API_URL}/api/v1/upload/utility/',
-      navan:   '${import.meta.env.VITE_API_URL}/api/v1/upload/navan/',
+      sap:     `${API_BASE}/api/v1/upload/sap/`,
+      utility: `${API_BASE}/api/v1/upload/utility/`,
+      navan:   `${API_BASE}/api/v1/upload/navan/`,
     };
 
     try {

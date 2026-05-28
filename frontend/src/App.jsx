@@ -12,8 +12,10 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    console.log("MY API URL IS:", import.meta.env.VITE_API_URL);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/token/`, {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const res = await fetch(`${API_BASE}/api/v1/auth/token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
