@@ -43,7 +43,7 @@ def _parse_date(raw: str) -> date | None:
     return None
 
 
-def _parse_amount_cents(raw: str) -> tuple[int, list[str]]:
+def _parse_amount(raw: str) -> tuple[int, list[str]]:
     warnings = []
     cleaned = raw.strip().lstrip("$£€").replace(",", "").strip()
     try:
@@ -85,7 +85,7 @@ def normalize_utility_record(raw: RawRecord, col_map: dict[str, str]) -> Normali
 
     currency = (get("currency") or "USD").upper()
     raw_amount = get("amount")
-    amount_cents, amount_warnings = _parse_amount_cents(raw_amount)
+    amount, amount_warnings = _parse_amount(raw_amount)
     warnings.extend(amount_warnings)
 
     raw_service = get("service_type").lower()
@@ -103,7 +103,7 @@ def normalize_utility_record(raw: RawRecord, col_map: dict[str, str]) -> Normali
     invoice_number = get("invoice_number")
 
     return NormalizedRecord(
-        client=raw.batch.client,
+        client=raw.client,
         raw_record=raw,
         source=raw.source,
         transaction_id=invoice_number or f"util-{raw.row_index}",

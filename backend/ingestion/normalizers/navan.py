@@ -36,9 +36,9 @@ def normalize_navan_record(raw: RawRecord) -> NormalizedRecord:
     amount_data = data.get("amount", {})
     try:
         total = float(amount_data.get("total", 0))
-        amount_cents = int(total * 100)
+        amount = int(total * 100)
     except (TypeError, ValueError):
-        amount_cents = 0
+        amount = 0
         warnings.append(f"Could not parse amount: {amount_data}")
 
     currency = (amount_data.get("currency") or "USD").upper()
@@ -66,7 +66,7 @@ def normalize_navan_record(raw: RawRecord) -> NormalizedRecord:
     description = " — ".join(p for p in description_parts if p)
 
     return NormalizedRecord(
-        client=raw.batch.client,
+        client=raw.client,
         raw_record=raw,
         source=raw.source,
         transaction_id=trip_id,

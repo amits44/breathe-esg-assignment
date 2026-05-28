@@ -3,7 +3,7 @@ import csv
 from datetime import datetime, date
 from decimal import Decimal, InvalidOperation
 from typing import Iterator
-from .models import NormalizedRecord, RawRecord
+from ingestion.models import NormalizedRecord, RawRecord
 
 EKKO_FIELDS = {"MANDT", "EBELN", "BUKRS", "LIFNR", "AEDAT"}
 EKPO_FIELDS = {"MANDT", "EBELN", "EBELP", "MATNR", "TXZ01", "WERKS", "MENGE", "MEINS", "NETWR"}
@@ -121,12 +121,12 @@ def normalize_sap_record(raw: RawRecord) -> NormalizedRecord:
                     cleaned = cleaned.replace(",", "")
             elif "," in cleaned:
                 cleaned = cleaned.replace(",", ".")
-            amount_cents = int(Decimal(cleaned) * 100)
+            amount = int(Decimal(cleaned) * 100)
         except Exception:
-            amount_cents = 0
+            amount = 0
             warnings.append(f"Could not parse NETWR '{raw_amount}', defaulting to 0")
     else:
-        amount_cents = 0
+        amount = 0
         warnings.append("NETWR missing on this line item")
 
     description = data.get("TXZ01", "").strip()
@@ -135,7 +135,7 @@ def normalize_sap_record(raw: RawRecord) -> NormalizedRecord:
     unit = data.get("MEINS", "").strip()
 
     return NormalizedRecord(
-        client=raw.batch.client,
+        client=raw.client,
         raw_record=raw,
         source=raw.source,
         transaction_id=transaction_id,
